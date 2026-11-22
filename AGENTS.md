@@ -1,5 +1,29 @@
 # AGENTS.md
 
+## Project and references
+
+MMMMM is a native MyGo music player with shared library, plugin and playback code across desktop and mobile. The website builds separately.
+
+- [MyGo Music](https://github.com/egoist/mygo-music) is the upstream app and the reference for existing playback and plugin behaviour. See [README.md](README.md) for the public plugin API.
+- [MuseAmp](https://github.com/Lakr233/MuseAmp) is the mobile UI and design reference. See [LICENSE](LICENSE) and [LICENSE-MuseAmp](LICENSE-MuseAmp) for attribution.
+- [MyGo](https://github.com/egoist/mygo) provides the native UI and build tool. Inspect the pinned source with `go list -m -f '{{.Dir}}' github.com/egoist/mygo` and follow the [MyGo maintenance skill](.agents/skills/mygo-maintenance/SKILL.md) for UI lifetime, threading and upgrades.
+- Use the [Apple HIG skill](.agents/skills/apple-hig/SKILL.md) for Apple platform UI work. The project provides `/duo` in Pi for iPhone Duo adaptation. [HIGAgentSkills 2026-09-27](https://github.com/justinwetch/HIGAgentSkills/tree/2206ff935b4affa9ad249a5399a3e8e29f5f6edd)
+
+## Build and verify
+
+- Use the Go version in `go.mod` and run `go mod download` from the repository root. MyGo needs Bun on `PATH` to evaluate `mygo.config.ts`.
+- Run `go tool mygo dev` for desktop development. On Apple Silicon, `go tool mygo build -platform darwin/arm64 -sign - -skip-dmg -skip-notarize` builds a local ad hoc signed app in `build/`.
+- Use the [mobile build commands](README.md#build) for iOS and Android. iOS requires Xcode with the target SDK. For Android, set `ANDROID_HOME` if MyGo cannot find the SDK.
+- After Go changes, run `go build -o /dev/null .` and `go test ./internal/...` as CI does. Run `go tool mygo vet .` after changing MyGo UI or callbacks.
+- Run one UI test with `go test ./internal/app -run '^TestMobileAlbumSplitPreservesSearch$' -count=5`, replacing the anchored test name as needed.
+- After changing Swift or Kotlin sources in `internal/app/mobile/` or their `internal/app/mygo-plugin.json` manifest, build the affected mobile target. Go tests do not compile those sources. Duo fold detection requires Swift 6.4 and the iOS 27.1 SDK or later, and runs on iOS 27.1 or later. Check screen transitions and controls using [duo-notes.md](duo-notes.md).
+
+## Compatibility and releases
+
+- Keep `app.agili.mmmmm` as the application ID unless a migration is requested. Keep `mygo-music://` for existing plugin install links and `mygo-music-dev://` for development builds.
+- Keep generated projects and artifacts in `.mygo/` and `build/` out of Git.
+- Check [.github/workflows/release.yml](.github/workflows/release.yml) before release work. Pushing a `v*` tag triggers the release workflow. Create release tags or run the release workflow only when requested. Keep signing credentials in the keychain or CI secrets.
+
 ## Tests
 
 Only write a test for behaviour that can actually break. If the code under test could change without the test noticing, or the test would fail on a harmless rewording, don't write it.
