@@ -5,8 +5,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // artistLinks shows a track's artists as its credits read, each a link to

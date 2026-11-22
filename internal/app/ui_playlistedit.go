@@ -7,7 +7,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // The listener's own playlists: making them, renaming them, deleting them,

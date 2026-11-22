@@ -8,7 +8,7 @@ import (
 
 	"github.com/egoist/mygo"
 
-	"mygo-music/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
 )
 
 // settings are the listener's choices, kept in settings.json in the user

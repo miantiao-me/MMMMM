@@ -7,7 +7,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // showData is what the app has of a show: what it is, and its episodes, as far

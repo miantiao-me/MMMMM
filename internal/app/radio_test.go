@@ -7,7 +7,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // sourced is tracks of the source called fake, as the player goes by.

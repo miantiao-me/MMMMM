@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // nothing is a source that does nothing: tests embed it and add what they need.

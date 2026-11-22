@@ -11,7 +11,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // The menu behind a song's dots in Now Playing copies its title, with its

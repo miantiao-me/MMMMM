@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 func TestFrameSize(t *testing.T) {

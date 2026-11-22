@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"mygo-music/internal/app"
+	"github.com/miantiao-me/MMMMM/internal/app"
 )
 
 func main() {

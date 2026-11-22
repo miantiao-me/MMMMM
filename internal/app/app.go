@@ -12,11 +12,11 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/local"
-	"mygo-music/internal/music"
-	"mygo-music/internal/player"
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/player"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 )
 
 type pageKind int
@@ -59,6 +59,7 @@ type app struct {
 	art   *artCache
 	pl    *player.Player
 	pal   palette
+	phone *mobileState
 
 	// libs are the sources, the built-in one first, and what the app has of
 	// each. The active one's is embedded: a.mine is what the active source
@@ -220,7 +221,7 @@ func (a *app) showMain() {
 func userDataDir(sub string) string {
 	dir, err := mygo.App.Path(mygo.PathUserData)
 	if err != nil {
-		dir = filepath.Join(os.TempDir(), "mygo-music")
+		dir = filepath.Join(os.TempDir(), "mmmmm")
 	}
 	return filepath.Join(dir, sub)
 }
@@ -228,7 +229,11 @@ func userDataDir(sub string) string {
 // makeSources makes the built-in source and those of the plugins dropped in,
 // none of them started yet, and makes active the one last used, if it's there.
 func (a *app) makeSources() {
-	a.local = local.New(userDataDir("local"))
+	if a.phone != nil {
+		a.local = local.NewWithImports(userDataDir("local"), userDataDir("imported-music"))
+	} else {
+		a.local = local.New(userDataDir("local"))
+	}
 	builtIn := newLibrary(a.local)
 	a.allLibs = []*library{builtIn}
 	plugin.SetOpenURL(mygo.Shell.OpenExternal)
@@ -249,6 +254,9 @@ func (a *app) makeSources() {
 		a.library = lib
 	}
 	a.route = route{page: pageHome, src: a.library.id}
+	if a.phone != nil {
+		a.route.page = a.phone.tab
+	}
 	a.local.OnChange(func() {
 		a.post(func() { a.libraryChanged(builtIn) })
 	})
@@ -319,8 +327,31 @@ func (a *app) closeSources() {
 	}
 }
 
+func (a *app) initPlayer() {
+	a.art = newArtCache(a.post)
+	a.pl = player.New(a.post)
+	a.pl.Quiet = mygo.RunOnMain
+	a.pl.Source = a.sourceByID
+	a.pl.Failed = a.sourceFailed
+	a.pl.Quality = func() string { return a.settings.Quality }
+	a.pl.Normalize = func() bool { return a.settings.Normalize }
+	a.pl.Cache = newSongCache(a.settings.CacheMB)
+	a.pl.Changed = func() {
+		a.keepSession()
+		a.syncCaptions()
+		if a.phone != nil {
+			a.syncMobileMedia()
+		}
+	}
+	a.volume = a.settings.Volume
+	a.pl.SetVolume(a.volume)
+}
+
 // Run runs the app until it quits.
 func Run() error {
+	if runtime.GOOS == "ios" || runtime.GOOS == "android" {
+		return runMobile()
+	}
 	// Opening the app again shows the running one's window: Linux and
 	// Windows would start another, with a second tray icon. Asked before
 	// anything else, so the second one touches no data on its way out.
@@ -346,20 +377,7 @@ func Run() error {
 		a.makeSources()
 		// Before the window: on Windows it lays out its content as it is
 		// made, and the view asks the player what plays.
-		a.art = newArtCache(a.post)
-		a.pl = player.New(a.post)
-		a.pl.Quiet = func(fn func()) { mygo.RunOnMain(fn) }
-		a.pl.Source = a.sourceByID
-		a.pl.Failed = a.sourceFailed
-		a.pl.Quality = func() string { return a.settings.Quality }
-		a.pl.Normalize = func() bool { return a.settings.Normalize }
-		a.pl.Cache = newSongCache(a.settings.CacheMB)
-		a.pl.Changed = func() {
-			a.keepSession()
-			a.syncCaptions()
-		}
-		a.volume = a.settings.Volume
-		a.pl.SetVolume(a.volume)
+		a.initPlayer()
 		a.win = mygo.NewWindow(mygo.WindowOptions{
 			Title:         mygo.App.Name(),
 			Width:         1180,

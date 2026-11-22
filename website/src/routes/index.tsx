@@ -4,6 +4,6 @@ import { pageHead } from '../i18n'
 import { site } from '../site'
 
 export const Route = createFileRoute('/')({
-  head: () => pageHead('/', 'en', site.title.en, site.description.en),
+  head: () => pageHead('/', 'en', `${site.name} · ${site.subtitle}`, site.description.en),
   component: Home,
 })

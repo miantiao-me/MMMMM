@@ -19,7 +19,7 @@ export const Route = createRootRoute({
       { name: 'twitter:card', content: 'summary' },
     ],
     links: [
-      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon.png', type: 'image/png', sizes: '96x96' },
       { rel: 'apple-touch-icon', href: '/icon.png' },
       { rel: 'stylesheet', href: css },
     ],

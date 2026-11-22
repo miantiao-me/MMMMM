@@ -1,13 +1,15 @@
-# MyGo Music
+# MMMMM
 
-A native desktop music player written in Go with [MyGo](https://github.com/egoist/mygo), no WebView. It plays your local files out of the box, and everything else comes from plugins.
+MyGo/Muse/Miantiao/Mobile/Music
+
+A native music player for iOS and Android, written in Go with [MyGo](https://github.com/egoist/mygo). Import music from your device or add music sources through plugins. The mobile interface follows [MuseAmp](https://github.com/Lakr233/MuseAmp).
 
 ## Features
 
 - Local files (MP3, FLAC, Ogg Vorbis, WAV, and ALAC, FLAC or AAC in .m4a and .aac) with tags, covers and `.lrc` lyrics
 - Playlists, liked songs, search, albums and artists
-- Now Playing with lyric stage styles, cover wall, queue, shuffle and repeat
-- Notch player on macOS, tray, media keys
+- Now Playing with cover artwork, synced lyrics, queue, shuffle and repeat
+- Background playback and system media controls
 - Audio cache, fades on pause and seek, loudness normalization
 - Session restore
 - Podcast captions, written down on the device as episodes play
@@ -17,14 +19,14 @@ A native desktop music player written in Go with [MyGo](https://github.com/egois
 ## Build
 
 ```bash
-go tool mygo dev     # run in development
-go tool mygo build   # package into build/
+go tool mygo build -platform ios/simulator  # iOS simulator app
+go tool mygo build -platform android        # Android packages
 go test ./internal/...
 ```
 
 ## Podcast captions
 
-Episodes are written down on the device as they play, with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) and Qwen3-ASR, which the app downloads when the listener asks for them. The libraries come from this repository's `sherpa-onnx-<version>` prerelease, which only changes with that version:
+Episodes are written down on the device as they play, with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) and Qwen3-ASR, which the app downloads when the listener asks for them. The published libraries come from [upstream MyGo Music’s `sherpa-onnx-2.0.1` prerelease](https://github.com/egoist/mygo-music/releases/tag/sherpa-onnx-2.0.1). To build the assets for a new release:
 
 ```bash
 go run ./scripts/sherpa -sign "Developer ID Application: …"
@@ -33,7 +35,9 @@ gh release create sherpa-onnx-2.0.1 --prerelease --latest=false build/sherpa/*
 
 ## Plugins
 
-A plugin is a folder in the app's `plugins` directory (Settings > Plugins > + > Show Plugins Folder) with a `plugin.json` and one JavaScript or TypeScript file. Install one with the + in Settings > Plugins from GitHub, by its repository or its address, or from its folder or a zip of it on this computer, or drop the folder in by hand. Remove one from its ⋯ menu there. There's nothing to build, and the same plugin runs on every platform. [`examples/demo-plugin`](examples/demo-plugin) does everything a plugin can with made-up data: copy it to start.
+On mobile, open Settings > Music Sources and tap + to install a plugin from GitHub or a ZIP file. Open the installed source to configure it, sign in if needed, and make it active.
+
+A plugin contains a `plugin.json` and a JavaScript or TypeScript entry point. The [demo plugin](examples/demo-plugin) shows the source API with sample data.
 
 ```json
 {
@@ -117,7 +121,7 @@ Of the `playlists`, those with `mine` are the listener's own, listed under My Pl
 
 `navigation` is the plugin's sidebar, in its order. An entry opens a `browse` page of its own by `page`, or one of the app's by `builtin`: `home`, `liked`, `savedAlbums`, `stations` or `shows`, which can be given a `title`. Without `navigation`, the sidebar has an entry for each of the app's pages the plugin can do. Up to four stations show as a switch over one card, and more as a grid.
 
-`minAppVersion` is the oldest version of MyGo Music the plugin works with. An older one won't install it, and says to update first. Versions before 0.1.8 don't read it.
+`minAppVersion` is the oldest version of MMMMM the plugin works with. An older one won't install it, and says to update first. Versions before 0.1.8 don't read it.
 
 ### Setting controls
 
@@ -166,7 +170,7 @@ Throw an error with a `code` to say what's wrong: `signIn` prompts the listener 
 
 Put it in a public GitHub repository, with `plugin.json` at the top. The app takes the latest release: a `.zip` asset named for the platform, such as `plugin-darwin-arm64.zip`, or one named for none, or else the source. Without a release it takes the latest commit of the default branch. A new tag or commit is a new version, which shows as an update in the settings. An update asking for more permissions asks the listener again.
 
-Add the topic `mygo-music-plugin` to the repository to have it listed on the [plugins page](https://mygo-music.egoist.dev/plugins).
+Add the topic `mygo-music-plugin` to the repository to have it listed on the [plugin search on GitHub](https://github.com/search?q=topic%3Amygo-music-plugin+archived%3Afalse&type=repositories).
 
 Link to `mygo-music://install-plugin?repo=owner/repo` for an install button: it opens the app, which downloads the plugin and asks the listener before installing it. The development app (`mygo dev`) answers `mygo-music-dev://` instead.
 

@@ -3,7 +3,7 @@ import { Layout } from '../components/Layout'
 import { AppWindow } from '../components/AppWindow'
 import { GitHubMark, Icon, type IconName } from '../components/Icon'
 import { ThemeSwitch } from '../theme'
-import { mygo, repo } from '../site'
+import { mygo, repo, site } from '../site'
 import { LangLink, Tr, useT } from '../i18n'
 
 export function Home() {
@@ -25,7 +25,7 @@ function Hero() {
       <div class="hero-text">
         <p class="eyebrow">
           <span class="pill">{t('Open source', '开源')}</span>
-          {t('A music player for your desktop', '为桌面而做的音乐播放器')}
+          {site.subtitle}
         </p>
         <h1 class="display hero-title">
           <Tr

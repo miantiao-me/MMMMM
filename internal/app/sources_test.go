@@ -3,7 +3,7 @@ package app
 import (
 	"errors"
 	"fmt"
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -15,8 +15,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // addOther adds a second source, called Other, whose pages and sidebar a test

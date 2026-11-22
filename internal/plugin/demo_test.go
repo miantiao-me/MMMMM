@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 func demo(t *testing.T) *Plugin {

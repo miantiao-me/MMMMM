@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"mygo-music/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
 )
 
 // Durations read as minutes and seconds, and counts shortly, as people read

@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/local"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // T returns text in the listener's language; see package i18n.
@@ -214,6 +214,10 @@ func (a *app) activate(lib *library) {
 // switchSource goes to a source's Home, as the sidebar's switcher does.
 func (a *app) switchSource(id string) {
 	if lib := a.libOf(id); lib != nil && lib != a.library {
+		if a.phone != nil {
+			a.selectMobileSource(lib)
+			return
+		}
 		a.open(route{page: pageHome, src: id})
 	}
 }

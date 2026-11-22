@@ -7,8 +7,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // Now Playing closes as one layer, covering the page and the sidebar alike on

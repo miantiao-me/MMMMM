@@ -7,8 +7,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/local"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // localApp has only the built-in source, keeping its data in a directory of

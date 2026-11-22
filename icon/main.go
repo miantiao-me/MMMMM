@@ -1,16 +1,9 @@
-// Command icon draws the app icons: the layers of AppIcon.icon, the Icon
-// Composer document that macOS 26 and later render in Liquid Glass, and
-// resources/icon.png, the same icon as macOS draws it, on the grid of older
-// macOS icons, for older macOS and Windows; and from AppIcon-dev.icon, cream
-// where the app's is red, resources/icon-dev.png, the icon of mygo dev
-// builds.
+// Command icon draws the layers of AppIcon-dev.icon and renders
+// resources/icon-dev.png for mygo dev builds.
 //
 // Run it from the repository root on a Mac with Xcode 26 or later:
 //
 //	go run ./icon
-//
-// The icon.json of each document, its background, glass and dark-mode
-// colors, is edited by hand or in Icon Composer.
 package main
 
 import (
@@ -29,18 +22,6 @@ import (
 
 const ictool = "/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool"
 
-// icons are the documents drawn, with the PNG rendered from each and the
-// colors of its tonearm: the gradient and the cap on its pivot.
-var icons = []struct {
-	document, output   string
-	top, bottom, pivot string
-}{
-	// Red, with a white tonearm.
-	{"icon/AppIcon.icon", "resources/icon.png", "#FFFFFF", "#E6E3E5", "#D9D5D8"},
-	// Cream, with a red one to match the label.
-	{"icon/AppIcon-dev.icon", "resources/icon-dev.png", "#FF5B5B", "#E3122C", "#FFE1DE"},
-}
-
 // A record on Icon Composer's 1024-point full-bleed canvas, seen close up:
 // larger than the canvas, it runs off the left and bottom edges. And the
 // tonearm over it, from its pivot to the headshell resting on the grooves.
@@ -51,20 +32,19 @@ var (
 )
 
 func main() {
-	for _, ic := range icons {
-		layers := map[string]string{
-			"arm.svg":    armSVG(ic.top, ic.bottom, ic.pivot),
-			"record.svg": recordSVG(),
-			"label.svg":  labelSVG(),
-		}
-		for name, s := range layers {
-			if err := os.WriteFile(filepath.Join(ic.document, "Assets", name), []byte(s), 0o644); err != nil {
-				log.Fatal(err)
-			}
-		}
-		if err := render(ic.document, ic.output); err != nil {
+	const document = "icon/AppIcon-dev.icon"
+	layers := map[string]string{
+		"arm.svg":    armSVG("#FF5B5B", "#E3122C", "#FFE1DE"),
+		"record.svg": recordSVG(),
+		"label.svg":  labelSVG(),
+	}
+	for name, s := range layers {
+		if err := os.WriteFile(filepath.Join(document, "Assets", name), []byte(s), 0o644); err != nil {
 			log.Fatal(err)
 		}
+	}
+	if err := render(document, "resources/icon-dev.png"); err != nil {
+		log.Fatal(err)
 	}
 }
 

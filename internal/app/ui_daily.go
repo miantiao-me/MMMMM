@@ -9,9 +9,9 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
-	"mygo-music/internal/player"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/player"
 )
 
 // featureCard leads a source's Home: the songs of its first section, in the

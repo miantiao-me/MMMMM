@@ -6,8 +6,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // Through the quiet parts of a song, its intro, an interlude or its outro,

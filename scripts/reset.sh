@@ -11,8 +11,8 @@
 # quit first.
 set -euo pipefail
 
-name="MyGo Music"
-id="dev.egoist.mygomusic"
+name="MMMMM"
+id="app.agili.mmmmm"
 release=0 songs=0
 for arg in "$@"; do
 	case "$arg" in

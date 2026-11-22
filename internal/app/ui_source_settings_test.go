@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/egoist/mygo/ui"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // These sources model plugins that change memory before a save fails. Reads

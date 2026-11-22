@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"sync/atomic"
 
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 )
 
 // headerPlugins are the plugins that are on, for the pictures loading off

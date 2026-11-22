@@ -7,7 +7,7 @@ import (
 	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 const sidebarWidth = 232
@@ -185,6 +185,10 @@ func (a *app) load(r route) {
 // closes Now Playing, which covers the pages.
 func (a *app) back() {
 	if a.nowPlaying {
+		if a.phone != nil && a.npPane == paneComments {
+			a.npPane = paneLyrics
+			return
+		}
 		a.nowPlaying = false
 		return
 	}

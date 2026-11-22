@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/egoist/mygo/ui"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // settingEdit belongs to one source/key. Only the main thread changes it;

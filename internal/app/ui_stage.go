@@ -6,8 +6,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // The stage shows lyrics as Folia's classic visualizer does: one line at a

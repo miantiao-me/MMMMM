@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to MyGo Music are written down here. Versions follow [Semantic Versioning](https://semver.org).
+All notable changes to MMMMM are written down here. Versions follow [Semantic Versioning](https://semver.org).
 
 ## [0.1.25] - 2026-11-14
 

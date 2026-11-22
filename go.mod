@@ -1,14 +1,14 @@
-module mygo-music
+module github.com/miantiao-me/MMMMM
 
 go 1.27.3
 
 tool github.com/egoist/mygo/cmd/mygo
 
 require (
-	github.com/MoeForge/moejs v0.1.0-alpha.11
+	github.com/MoeForge/moejs v0.1.1
 	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/ebitengine/purego v0.11.1
-	github.com/egoist/mygo v0.9.0
+	github.com/egoist/mygo v0.10.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/jfreymuth/oggvorbis v1.0.5
 	github.com/tphakala/go-aac v0.7.1
@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	github.com/MoeForge/moego v0.1.0-alpha.3 // indirect
 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
 	github.com/cloudflare/circl v1.6.2 // indirect
 	github.com/go-text/typesetting v0.3.5 // indirect

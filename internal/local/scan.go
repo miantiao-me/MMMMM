@@ -57,6 +57,14 @@ func (s *Source) loadIndex(folders []string) []entry {
 	if err := json.Unmarshal(b, &index); err != nil || index.Version != indexVersion {
 		return nil
 	}
+	if s.imports != "" {
+		for i := range index.Tracks {
+			e := &index.Tracks[i]
+			e.Path = inside(s.imports, e.Path)
+			e.Sidecar = inside(s.imports, e.Sidecar)
+			e.Cover = inside(s.coverDir(), e.Cover)
+		}
+	}
 	return slices.DeleteFunc(index.Tracks, func(e entry) bool {
 		return !slices.ContainsFunc(folders, func(f string) bool { return within(e.Path, f) })
 	})
@@ -67,8 +75,31 @@ func within(path, folder string) bool {
 	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
 }
 
+func relativeTo(path, root string) string {
+	if path != "" && root != "" && within(path, root) {
+		rel, _ := filepath.Rel(root, path)
+		return rel
+	}
+	return path
+}
+
+func inside(root, path string) string {
+	if path != "" && filepath.IsLocal(path) {
+		return filepath.Join(root, path)
+	}
+	return path
+}
+
 func (s *Source) saveIndex(entries map[string]entry) {
 	tracks := slices.Collect(maps.Values(entries))
+	if s.imports != "" {
+		for i := range tracks {
+			e := &tracks[i]
+			e.Path = relativeTo(e.Path, s.imports)
+			e.Sidecar = relativeTo(e.Sidecar, s.imports)
+			e.Cover = relativeTo(e.Cover, s.coverDir())
+		}
+	}
 	slices.SortFunc(tracks, func(a, b entry) int { return strings.Compare(a.Path, b.Path) })
 	b, err := json.Marshal(indexFile{Version: indexVersion, Tracks: tracks})
 	if err == nil {
@@ -174,7 +205,7 @@ func (s *Source) scan(ctx context.Context, gen int64, folders []string) {
 // publish makes the entries what's listed, and says so, unless a newer scan has
 // taken over. The last one of a scan ends it.
 func (s *Source) publish(gen int64, entries map[string]entry, last bool) {
-	cat := buildCatalog(slices.Collect(maps.Values(entries)))
+	cat := s.buildCatalog(slices.Collect(maps.Values(entries)))
 	s.mu.Lock()
 	ok := gen == s.scanGen
 	if ok {

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // streamer answers the same stream for any track, counting how often it's asked.

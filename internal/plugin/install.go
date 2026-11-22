@@ -21,7 +21,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"mygo-music/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/local"
 )
 
 // Plugins install from GitHub: a repository's latest release, as the zip it
@@ -179,7 +179,7 @@ func githubSend(url, accept string) (*http.Response, error) {
 		if err != nil {
 			return nil, err
 		}
-		req.Header.Set("User-Agent", "mygo-music")
+		req.Header.Set("User-Agent", "mmmmm")
 		if accept != "" {
 			req.Header.Set("Accept", accept)
 		}
@@ -258,27 +258,38 @@ func Latest(repo string) (*Release, error) {
 	return &Release{Repo: repo, Version: commit.SHA[:min(len(commit.SHA), 12)], url: githubAPI + "/repos/" + repo + "/zipball/" + commit.SHA}, nil
 }
 
-// pickAsset chooses the zip for a platform: the one named for it, or else one
-// named for none. A release of zips for other platforms alone has none to offer,
-// and -1 leaves its source.
+// pickAsset prefers a zip for the exact OS and architecture, then one for the
+// OS, then a general zip. Returning -1 leaves the release’s source archive.
 func pickAsset(names []string, goos, goarch string) int {
-	platforms := []string{"darwin", "linux", "windows"}
-	general := -1
+	platform, general := -1, -1
 	for i, name := range names {
-		n := strings.ToLower(name)
-		if !strings.HasSuffix(n, ".zip") {
+		n, ok := strings.CutSuffix(strings.ToLower(name), ".zip")
+		if !ok {
 			continue
 		}
-		if strings.Contains(n, goos) && strings.Contains(n, goarch) {
+		os, arch := "", ""
+		for _, part := range strings.FieldsFunc(n, func(r rune) bool { return r == '-' || r == '_' || r == '.' }) {
+			switch part {
+			case "android", "ios", "darwin", "linux", "windows":
+				os = part
+			case "win32":
+				os = "windows"
+			case "386", "amd64", "arm", "arm64", "riscv64", "loong64", "ppc64", "ppc64le", "s390x", "mips", "mipsle", "mips64", "mips64le":
+				arch = part
+			}
+		}
+		if os == goos && arch == goarch {
 			return i
 		}
-		other := false
-		for _, p := range platforms {
-			other = other || strings.Contains(n, p)
+		if os == goos && arch == "" && platform < 0 {
+			platform = i
 		}
-		if !other && general < 0 {
+		if os == "" && (arch == "" || arch == goarch) && general < 0 {
 			general = i
 		}
+	}
+	if platform >= 0 {
+		return platform
 	}
 	return general
 }

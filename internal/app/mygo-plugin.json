@@ -1,0 +1,32 @@
+{
+  "mobile": {
+    "id": "musicMedia",
+    "ios": {
+      "sources": [
+        "mobile/MusicMedia.swift",
+        "mobile/MusicFold.swift"
+      ],
+      "class": "MusicMediaPlugin",
+      "frameworks": [
+        "AVFoundation",
+        "AVKit",
+        "MediaPlayer"
+      ]
+    },
+    "android": {
+      "sources": [
+        "mobile/MusicMedia.kt",
+        "mobile/MusicFold.kt"
+      ],
+      "class": "MusicMediaPlugin",
+      "dependencies": ["androidx.window:window-java:1.5.1"],
+      "permissions": [
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
+      "application": [
+        "<service android:name=\"dev.mygo.MusicPlaybackService\" android:exported=\"false\" android:foregroundServiceType=\"mediaPlayback\" />"
+      ]
+    }
+  }
+}

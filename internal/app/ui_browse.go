@@ -7,8 +7,8 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // Pages a source makes up itself: what its Home shows, and any other, opened
@@ -144,7 +144,7 @@ const (
 
 // browseLayout lays out page in rows. The first section of Home, if tracks, is
 // the card that leads it.
-func browseLayout(page *music.Browse, pageID string, cols int) []browseRow {
+func browseLayout(page *music.Browse, featureFirst bool, cols int) []browseRow {
 	var rows []browseRow
 	cards := func(kind rowKind, s, n int) {
 		for from := 0; from < n; from += cols {
@@ -153,7 +153,7 @@ func browseLayout(page *music.Browse, pageID string, cols int) []browseRow {
 	}
 	for s := range page.Sections {
 		sec := &page.Sections[s]
-		if s == 0 && pageID == "" && len(sec.Tracks) > 0 {
+		if s == 0 && featureFirst && len(sec.Tracks) > 0 {
 			rows = append(rows, browseRow{rowFeature, s, 0, 0})
 			if len(sec.Albums)+len(sec.Artists)+len(sec.Playlists)+len(sec.Shows)+len(sec.Stations)+len(sec.Links) == 0 {
 				continue
@@ -161,7 +161,7 @@ func browseLayout(page *music.Browse, pageID string, cols int) []browseRow {
 		} else if sec.Title != "" || sec.MorePage != "" {
 			rows = append(rows, browseRow{rowTitle, s, 0, 0})
 		}
-		if s != 0 || pageID != "" {
+		if s != 0 || !featureFirst {
 			for i := range sec.Tracks {
 				rows = append(rows, browseRow{rowTrack, s, i, i})
 			}
@@ -182,7 +182,7 @@ func browseLayout(page *music.Browse, pageID string, cols int) []browseRow {
 // browseRows shows a page under a header, which scrolls with it.
 func (a *app) browseRows(c *ui.Context, page *music.Browse, pageID string, header func(c *ui.Context)) {
 	cols := a.columns(c, 156)
-	layout := browseLayout(page, pageID, cols)
+	layout := browseLayout(page, pageID == "", cols)
 	top, bottom := a.insets(c)
 	a.underTop, a.underBottom = true, true
 	rows := len(layout) + 1

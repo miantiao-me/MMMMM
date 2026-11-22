@@ -7,8 +7,8 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 var white = ui.RGB(255, 255, 255)
@@ -214,7 +214,7 @@ func (a *app) npBreathe(e ui.Element, scale float32) {
 // gets there, rather than going sharp and rounding at once as the bar's
 // cover takes its place.
 func (a *app) npRadius(c *ui.Context, r, size float32) float32 {
-	if a.npT >= 1 || a.npStill {
+	if a.phone != nil || a.npT >= 1 || a.npStill {
 		return r
 	}
 	w, h := c.Size()

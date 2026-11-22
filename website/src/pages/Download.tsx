@@ -1,8 +1,8 @@
 import { For, Show, createSignal, onMount } from 'solid-js'
 import { Layout } from '../components/Layout'
 import { GitHubMark, Icon } from '../components/Icon'
-import { release, repo } from '../site'
-import { Tr, useLang, useT } from '../i18n'
+import { release, repo, type Release } from '../site'
+import { Tr, useT } from '../i18n'
 
 type OS = 'mac' | 'windows' | 'linux'
 
@@ -54,7 +54,7 @@ const installSh = `curl -fsSL ${repo}/releases/latest/download/install.sh | sh`
 const installPs = `irm ${repo}/releases/latest/download/install.ps1 | iex`
 
 // A build's asset; a build the release has none of links to the release.
-const asset = (b: Build) => release.assets.find((a) => b.match(a.name))
+const asset = (release: Release, b: Build) => release.assets.find((a) => b.match(a.name))
 
 function detectOS(): OS | undefined {
   const ua = navigator.userAgent
@@ -76,7 +76,6 @@ function day(iso: string, lang: 'en' | 'zh') {
 
 export function Download() {
   const t = useT()
-  const lang = useLang()
   // The page is rendered at build time; the system of the visitor comes
   // once it runs in the browser.
   const [os, setOS] = createSignal<OS>()
@@ -102,57 +101,19 @@ export function Download() {
               }
             />
           </h1>
-          <p class="fine download-version">
-            {t(
-              `Version ${release.tag_name.replace(/^v/, '')} · Released ${day(release.published_at, 'en')}`,
-              `版本 ${release.tag_name.replace(/^v/, '')} · 发布于 ${day(release.published_at, 'zh')}`,
+          <Show when={release} fallback={<p class="fine download-version">{t('No releases yet.', '暂无发行版。')}</p>}>
+            {(current) => (
+              <p class="fine download-version">
+                {t(
+                  `Version ${current().tag_name.replace(/^v/, '')} · Released ${day(current().published_at, 'en')}`,
+                  `版本 ${current().tag_name.replace(/^v/, '')} · 发布于 ${day(current().published_at, 'zh')}`,
+                )}
+              </p>
             )}
-          </p>
+          </Show>
         </div>
 
-        <div class="platforms">
-          <For each={platforms}>
-            {(p) => (
-              <article class="platform">
-                <div class="platform-head">
-                  <h2>{p.name}</h2>
-                  <Show when={os() === p.os}>
-                    <span class="pill">{t('Your system', '你的系统')}</span>
-                  </Show>
-                </div>
-                <p class="platform-note">{t(...p.note)}</p>
-                <div class="platform-builds">
-                  <For each={p.builds}>
-                    {(b) => (
-                      <a
-                        class="build"
-                        classList={{ primary: b.primary }}
-                        href={asset(b)?.browser_download_url ?? `${repo}/releases/tag/${release.tag_name}`}
-                      >
-                        <Icon name="download" size={16} />
-                        <span class="build-label">{t(...b.label)}</span>
-                        <span class="build-kind">{t(...b.kind)}</span>
-                        <Show when={asset(b)}>{(a) => <span class="build-size">{megabytes(a().size)}</span>}</Show>
-                      </a>
-                    )}
-                  </For>
-                </div>
-              </article>
-            )}
-          </For>
-        </div>
-
-        <div class="install">
-          <h2>{t('Install with one command', '用一行命令安装')}</h2>
-          <p>
-            {t(
-              'Downloads the latest version into your home folder, where it keeps itself up to date.',
-              '下载最新版本，装到你的用户目录，以后同样自动更新。',
-            )}
-          </p>
-          <Command label={t('macOS and Linux', 'macOS 与 Linux')} text={installSh} />
-          <Command label="Windows PowerShell" text={installPs} />
-        </div>
+        <Show when={release}>{(current) => <ReleaseDownloads release={current()} os={os()} />}</Show>
 
         <p class="fine download-more">
           <GitHubMark size={14} />
@@ -160,6 +121,60 @@ export function Download() {
         </p>
       </section>
     </Layout>
+  )
+}
+
+function ReleaseDownloads(props: { release: Release; os: OS | undefined }) {
+  const t = useT()
+  return (
+    <>
+      <div class="platforms">
+        <For each={platforms}>
+          {(p) => (
+            <article class="platform">
+              <div class="platform-head">
+                <h2>{p.name}</h2>
+                <Show when={props.os === p.os}>
+                  <span class="pill">{t('Your system', '你的系统')}</span>
+                </Show>
+              </div>
+              <p class="platform-note">{t(...p.note)}</p>
+              <div class="platform-builds">
+                <For each={p.builds}>
+                  {(b) => {
+                    const installer = asset(props.release, b)
+                    return (
+                      <a
+                        class="build"
+                        classList={{ primary: b.primary }}
+                        href={installer?.browser_download_url ?? `${repo}/releases/tag/${props.release.tag_name}`}
+                      >
+                        <Icon name="download" size={16} />
+                        <span class="build-label">{t(...b.label)}</span>
+                        <span class="build-kind">{t(...b.kind)}</span>
+                        <Show when={installer}>{(a) => <span class="build-size">{megabytes(a().size)}</span>}</Show>
+                      </a>
+                    )
+                  }}
+                </For>
+              </div>
+            </article>
+          )}
+        </For>
+      </div>
+
+      <div class="install">
+        <h2>{t('Install with one command', '用一行命令安装')}</h2>
+        <p>
+          {t(
+            'Downloads the latest version into your home folder, where it keeps itself up to date.',
+            '下载最新版本，装到你的用户目录，以后同样自动更新。',
+          )}
+        </p>
+        <Command label={t('macOS and Linux', 'macOS 与 Linux')} text={installSh} />
+        <Command label="Windows PowerShell" text={installPs} />
+      </div>
+    </>
   )
 }
 

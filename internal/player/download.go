@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // Song is a track's audio found for the listener to keep a copy of, in a file

@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // Remote playback: a track of a PlaybackRemote source plays elsewhere, in the

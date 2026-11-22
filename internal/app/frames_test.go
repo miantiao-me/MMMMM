@@ -9,9 +9,9 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/local"
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // framesDir is where MM_FRAMES says to save a look at the views, which a test

@@ -23,8 +23,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // ID is the source's ID, on every track it answers.
@@ -52,7 +52,8 @@ var can = map[string]bool{
 // Source is a music.Source of the files in the listener's folders. It's safe
 // to use from any goroutine.
 type Source struct {
-	dir string
+	dir     string
+	imports string
 
 	// cat is what's listed now: never changed, only replaced. Reading it takes
 	// no lock.
@@ -76,13 +77,26 @@ type Source struct {
 // New returns the source keeping its data in dataDir, listing what the last
 // scan found. It doesn't scan: see Rescan.
 func New(dataDir string) *Source {
-	s := &Source{dir: dataDir}
+	return newSource(dataDir, "")
+}
+
+// NewWithImports lists files managed by the app inside its sandbox. The folder
+// follows the app's data when the operating system moves the sandbox.
+func NewWithImports(dataDir, imports string) *Source {
+	return newSource(dataDir, imports)
+}
+
+func newSource(dataDir, imports string) *Source {
+	s := &Source{dir: dataDir, imports: imports}
 	if b, err := os.ReadFile(s.libraryPath()); err == nil {
 		if err := json.Unmarshal(b, &s.lib); err != nil {
 			log.Printf("local: reading library: %v", err)
 		}
 	}
-	s.cat.Store(buildCatalog(s.loadIndex(s.lib.Folders)))
+	if imports != "" {
+		s.lib.Folders = []string{imports}
+	}
+	s.cat.Store(s.buildCatalog(s.loadIndex(s.lib.Folders)))
 	return s
 }
 

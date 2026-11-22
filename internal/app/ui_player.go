@@ -7,7 +7,7 @@ import (
 	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/player"
+	"github.com/miantiao-me/MMMMM/internal/player"
 )
 
 // scrubState is a progress bar's own: the value dragged, while it is, and
@@ -62,6 +62,9 @@ func (a *app) scrubber(c *ui.Context, st *scrubState, track, fill ui.Color, heig
 	thick := float32(4)
 	if hot {
 		thick = 6
+	}
+	if a.phone != nil {
+		thick += 4
 	}
 	thick = s.AnimateTo("thick", thick, ui.Snappy)
 	knob := float32(0)

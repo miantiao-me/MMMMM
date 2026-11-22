@@ -386,8 +386,31 @@ func TestPickAsset(t *testing.T) {
 		{nil, -1},
 	} {
 		if got := pickAsset(c.names, "darwin", "arm64"); got != c.want {
-			t.Error(fmt.Sprintf("%v: %d, want %d", c.names, got, c.want))
+			t.Errorf("%v: %d, want %d", c.names, got, c.want)
 		}
+	}
+}
+
+// Mobile clients choose their own build or a shared archive when another platform comes first.
+func TestPickMobileAsset(t *testing.T) {
+	names := []string{"plugin-win32-amd64.zip", "plugin-ios-arm64.zip", "plugin-android.zip", "plugin-android-arm64.zip", "plugin.zip"}
+	for _, c := range []struct {
+		goos, goarch string
+		want         int
+	}{
+		{"ios", "arm64", 1},
+		{"ios", "amd64", 4},
+		{"android", "arm64", 3},
+		{"android", "amd64", 2},
+		{"darwin", "arm64", 4},
+		{"windows", "amd64", 0},
+	} {
+		if got := pickAsset(names, c.goos, c.goarch); got != c.want {
+			t.Errorf("%s/%s: got %d, want %d", c.goos, c.goarch, got, c.want)
+		}
+	}
+	if got := pickAsset(names[:2], "android", "arm64"); got != -1 {
+		t.Errorf("desktop and iOS assets: got %d, want source fallback", got)
 	}
 }
 

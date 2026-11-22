@@ -11,14 +11,18 @@ import (
 	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/local"
-	"mygo-music/internal/music"
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 )
 
 // openSettings shows the settings window, opening it the first time.
 func (a *app) openSettings() {
+	if a.phone != nil {
+		a.selectMobileTab(mobileSettings)
+		return
+	}
 	if a.win == nil {
 		return // no app to show a window in, as in tests
 	}
@@ -62,6 +66,14 @@ func (a *app) openSettings() {
 
 // openSourceSettings shows the page of the settings where plugins are set up.
 func (a *app) openSourceSettings() {
+	if a.phone != nil {
+		if a.phone.tab != mobileSettings {
+			a.selectMobileTab(mobileSettings)
+		}
+		a.settingsQuery = ""
+		a.open(route{page: mobileSources})
+		return
+	}
 	a.settingsPage, a.settingsQuery = "plugins", ""
 	a.openSettings()
 }
@@ -85,7 +97,7 @@ func (a *app) setLanguage(code string) {
 	a.settings.Language = code
 	i18n.SetLanguage(i18n.Resolve(code, systemLanguages()))
 	a.changed()
-	if a.win != nil {
+	if a.win != nil && a.phone == nil {
 		a.setMenu()
 		a.refreshTray()
 	}
@@ -349,7 +361,14 @@ func (a *app) settingsSections(c *ui.Context, p palette) []settingsSection {
 					i = k
 				}
 			}
-			if segmented(c.Key("appearance"), &i, T("System"), T("Light"), T("Dark")) {
+			labels := []string{T("System"), T("Light"), T("Dark")}
+			var changed bool
+			if a.phone != nil {
+				i, changed = choice(c, "appearance", T("Appearance"), labels, i)
+			} else {
+				changed = segmented(c.Key("appearance"), &i, labels...)
+			}
+			if changed {
 				s.Appearance = modes[i]
 				a.changed()
 			}
@@ -371,7 +390,7 @@ func (a *app) settingsSections(c *ui.Context, p palette) []settingsSection {
 		})
 		// Only on macOS: elsewhere the icon is always in the notification
 		// area.
-		if runtime.GOOS == "darwin" {
+		if a.phone == nil && runtime.GOOS == "darwin" {
 			row(T("App Icon"), T("Shown in the menu bar, it opens the window again after you close it"), func() {
 				labels := make([]string, len(appIcons))
 				at := 0
@@ -390,7 +409,9 @@ func (a *app) settingsSections(c *ui.Context, p palette) []settingsSection {
 		}
 	})
 
-	add("plugins", T("Plugins"), iconPlug, func(row settingsRow, block settingsBlock) { a.sourceSettings(c, row, block, p) })
+	if a.phone == nil {
+		add("plugins", T("Plugins"), iconPlug, func(row settingsRow, block settingsBlock) { a.sourceSettings(c, row, block, p) })
+	}
 
 	// Only on macOS, the one with a notch player.
 	if a.notch != nil {
@@ -481,11 +502,13 @@ func (a *app) settingsSections(c *ui.Context, p palette) []settingsSection {
 				a.changed()
 			}
 		})
-		row(T("Grow From the Cover"), T("Now Playing opens out of the cover in the player bar and shrinks back into it, rather than sliding up from the bottom"), func() {
-			if ui.Switch(c.Key("grow-from-cover"), &s.GrowFromCover).Label(T("Grow From the Cover")).Changed() {
-				a.changed()
-			}
-		})
+		if a.phone == nil {
+			row(T("Grow From the Cover"), T("Now Playing opens out of the cover in the player bar and shrinks back into it, rather than sliding up from the bottom"), func() {
+				if ui.Switch(c.Key("grow-from-cover"), &s.GrowFromCover).Label(T("Grow From the Cover")).Changed() {
+					a.changed()
+				}
+			})
+		}
 	})
 
 	if a.updates {

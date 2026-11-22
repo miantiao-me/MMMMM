@@ -12,7 +12,7 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 )
 
 // Plugins install from GitHub repositories, and update from where they came, or
@@ -203,7 +203,7 @@ func installError(err error) string {
 		return T("There's no such public repository on GitHub")
 	}
 	if needs, ok := errors.AsType[*plugin.NeedsNewerApp](err); ok {
-		return Tf("%s needs MyGo Music %s or later. Update MyGo Music first.", needs.Plugin, needs.Version)
+		return Tf("%s needs MMMMM %s or later. Update MMMMM first.", needs.Plugin, needs.Version)
 	}
 	return err.Error()
 }

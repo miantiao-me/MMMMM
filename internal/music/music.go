@@ -20,11 +20,13 @@ type Artist struct {
 }
 
 type Album struct {
-	ID       string   `json:"id"`
-	Name     string   `json:"name"`
-	ImageURL string   `json:"imageUrl,omitempty"`
-	Artists  []Artist `json:"artists,omitempty"`
-	Released string   `json:"released,omitempty"` // as the source has it, such as 2024-03-01
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	ImageURL   string   `json:"imageUrl,omitempty"`
+	Artists    []Artist `json:"artists,omitempty"`
+	Released   string   `json:"released,omitempty"` // as the source has it, such as 2024-03-01
+	TrackCount int      `json:"trackCount,omitempty"`
+	Duration   int64    `json:"duration,omitempty"` // milliseconds, when all tracks have a known duration
 	// Saved says the listener saved it, for a source with saveAlbum.
 	Saved bool `json:"saved,omitempty"`
 }

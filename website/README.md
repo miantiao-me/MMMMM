@@ -1,6 +1,6 @@
 # Website
 
-The home page of MyGo Music, written with TanStack Start and Solid. It's prerendered into static files at build time and deployed to Cloudflare (Workers static assets, no Worker script).
+The home page of MMMMM, written with TanStack Start and Solid. It's prerendered into static files at build time and deployed to Cloudflare (Workers static assets, no Worker script).
 
 ```bash
 bun install          # at the root of the repository

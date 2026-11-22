@@ -25,8 +25,8 @@ import (
 	"github.com/MoeForge/moejs"
 	"github.com/MoeForge/moejs/webapi"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // openURL opens a page in the listener's browser. The app sets it.

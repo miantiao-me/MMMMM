@@ -1,5 +1,4 @@
 import { createSignal, onCleanup, onMount, type JSX } from 'solid-js'
-import { AppIcon } from './AppIcon'
 import { GitHubMark, Icon } from './Icon'
 import { ThemeSwitch } from '../theme'
 import { mygo, repo, site } from '../site'
@@ -31,7 +30,7 @@ function Header(props: { langPath?: string }) {
     <header class="nav" classList={{ scrolled: scrolled() }}>
       <div class="nav-inner">
         <LangLink to="/" class="brand" aria-label={site.name}>
-          <AppIcon size={28} />
+          <img src="/favicon.png" alt="" width={28} height={28} />
           <span>{site.name}</span>
         </LangLink>
         <div class="nav-end">

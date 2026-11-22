@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 var (
@@ -191,6 +191,47 @@ func albumNamed(t *testing.T, s *Source, name string) []music.Album {
 		}
 	}
 	return out
+}
+
+// Moving the app sandbox keeps imported tracks, likes, and lyrics accessible.
+func TestImportedLibrarySurvivesSandboxMove(t *testing.T) {
+	parent := t.TempDir()
+	root := filepath.Join(parent, "old")
+	imports := filepath.Join(root, "imported-music")
+	write(t, filepath.Join(imports, "track.mp3"), mp3With(t,
+		[2]string{"TIT2", "Test track"}, [2]string{"TALB", "Test album"},
+	))
+	const lrc = "[00:00.00]Test lyrics"
+	write(t, filepath.Join(imports, "track.lrc"), []byte(lrc))
+	s := NewWithImports(filepath.Join(root, "local"), imports)
+	rescan(t, s)
+	before := songNamed(t, s, "Test track")
+	if err := s.Like(before.ID, true); err != nil {
+		t.Fatal(err)
+	}
+
+	moved := filepath.Join(parent, "new")
+	if err := os.Rename(root, moved); err != nil {
+		t.Fatal(err)
+	}
+	imports = filepath.Join(moved, "imported-music")
+	s = NewWithImports(filepath.Join(moved, "local"), imports)
+	after := songNamed(t, s, "Test track")
+	if after.ID != before.ID || after.Album.ID != before.Album.ID {
+		t.Fatalf("IDs changed after moving the sandbox: %+v → %+v", before, after)
+	}
+	likes, err := s.IsLiked([]string{after.ID})
+	if err != nil || !likes[after.ID] {
+		t.Fatalf("likes after moving the sandbox: %v, %v", likes, err)
+	}
+	lyric, err := s.Lyrics(after.ID)
+	if err != nil || lyric.LRC != lrc {
+		t.Fatalf("lyrics after moving the sandbox: %+v, %v", lyric, err)
+	}
+	stream, err := s.Stream(after.ID, "")
+	if err != nil || stream.URL != music.FileURL(filepath.Join(imports, "track.mp3")) {
+		t.Fatalf("stream after moving the sandbox: %+v, %v", stream, err)
+	}
 }
 
 // The tags of both kinds of file end up on the track.

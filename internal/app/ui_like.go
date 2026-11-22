@@ -6,7 +6,7 @@ import (
 
 	"github.com/egoist/mygo/ui"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // likes are the songs and episodes the listener likes, which hearts show
@@ -190,7 +190,12 @@ func (a *app) likeButton(c *ui.Context, tr *music.Track, size float32, color ui.
 	// The burst goes on a wrapper, which the heart's pop does not scale.
 	wrap := ui.Box(c).Center()
 	var b ui.Element
-	wrap.Children(func() { b = iconButton(c, icon, size, color, label) })
+	wrap.Children(func() {
+		b = iconButton(c, icon, size, color, label)
+		if a.phone != nil {
+			b.MinWidth(44).MinHeight(44).FocusRing(false)
+		}
+	})
 	scale := b.AnimateTo("pop", 1, ui.Animation{Spring: ui.SpringOptions{Duration: 550 * time.Millisecond, Bounce: 0.55}})
 	b.Scale(scale, scale)
 	burst := ui.Local(wrap, "burst", func() time.Time { return time.Time{} })

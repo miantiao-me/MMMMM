@@ -8,7 +8,7 @@ import (
 
 	"github.com/egoist/mygo"
 
-	"mygo-music/internal/plugin"
+	"github.com/miantiao-me/MMMMM/internal/plugin"
 )
 
 // Plugins of services that have no way in but their website sign in on a page

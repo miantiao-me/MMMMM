@@ -18,8 +18,8 @@ import (
 	"testing"
 	"time"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // The test binary is the program plugins start: with this set, it echoes lines.

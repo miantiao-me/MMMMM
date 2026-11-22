@@ -1,6 +1,7 @@
 package app
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"unicode"
@@ -8,8 +9,9 @@ import (
 
 	"github.com/egoist/mygo"
 
-	"mygo-music/internal/local"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/local"
+	"github.com/miantiao-me/MMMMM/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/player"
 )
 
 // saveSongAs asks the listener where to save a song with the native dialog,
@@ -50,7 +52,12 @@ func (a *app) download(tr music.Track) {
 			a.post(func() { a.actionFailed(lib, err, T("Couldn't download this song")) })
 			return
 		}
-		path := saveSongAs(a, songFileName(&tr, song.Type))
+		name := songFileName(&tr, song.Type)
+		if a.phone != nil {
+			a.exportMobileSong(lib, tr, song, name)
+			return
+		}
+		path := saveSongAs(a, name)
 		if path == "" {
 			song.Close()
 			return
@@ -65,6 +72,28 @@ func (a *app) download(tr music.Track) {
 			a.toast = Tf("Downloaded %s", tr.Name)
 		})
 	}()
+}
+
+// exportMobileSong hands a complete file to the system's document picker.
+func (a *app) exportMobileSong(lib *library, tr music.Track, song *player.Song, name string) {
+	defer song.Close()
+	dir, err := os.MkdirTemp("", "mmmmm-export-")
+	var destination string
+	if err == nil {
+		defer os.RemoveAll(dir)
+		a.post(func() { a.toast = T("Downloading…") })
+		path := filepath.Join(dir, name)
+		if err = song.SaveTo(path); err == nil {
+			destination, err = mygo.Dialog.SaveCopy(path, name)
+		}
+	}
+	a.post(func() {
+		if err != nil {
+			a.actionFailed(lib, err, T("Couldn't download this song"))
+		} else if destination != "" {
+			a.toast = Tf("Downloaded %s", tr.Name)
+		}
+	})
 }
 
 // songFileName names the file of a song of type ext as its credits read,

@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // The answers of a plugin name their tracks without their source, which is

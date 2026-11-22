@@ -10,9 +10,9 @@ import (
 	"github.com/egoist/mygo"
 	"github.com/egoist/mygo/audio"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/lyrics"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 type RepeatMode int
@@ -45,6 +45,8 @@ type Player struct {
 	// Changed, if set, hears that what plays, where it is or whether it
 	// plays changed.
 	Changed func()
+	// ArtworkChanged publishes the current cover to a platform media session.
+	ArtworkChanged func([]byte)
 
 	queue   []music.Track
 	order   []int // the queue's indices in play order: shuffled or not
@@ -64,7 +66,7 @@ type Player struct {
 	track   *music.Track
 	out     *audio.Player
 	stream  stream
-	watch   *watched // stream, as out plays it
+	watch   *watched      // stream, as out plays it
 	info    *music.Stream // what the current track streams
 	fade    fader
 	gain    float64 // the current track's normalizing gain
@@ -145,6 +147,10 @@ func (p *Player) sync() {
 
 // announce shows the system the track, and its cover once loaded.
 func (p *Player) announce(t *music.Track, artwork []byte) {
+	if p.ArtworkChanged != nil {
+		p.ArtworkChanged(artwork)
+		return
+	}
 	state := mygo.PlaybackPaused
 	if p.playing {
 		state = mygo.PlaybackPlaying

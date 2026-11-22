@@ -6,7 +6,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"mygo-music/internal/lyrics"
+	"github.com/miantiao-me/MMMMM/internal/lyrics"
 )
 
 // How long a caption's line is, in characters: it ends at a sentence's

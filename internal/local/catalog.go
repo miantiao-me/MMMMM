@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"strings"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 // entry is what's known of a file, as index.json keeps it.
@@ -113,7 +113,7 @@ func splitArtists(tag string) []string {
 	return names
 }
 
-func buildCatalog(entries []entry) *catalog {
+func (s *Source) buildCatalog(entries []entry) *catalog {
 	c := &catalog{
 		byID:       make(map[string]*item, len(entries)),
 		byPath:     make(map[string]*item, len(entries)),
@@ -126,7 +126,9 @@ func buildCatalog(entries []entry) *catalog {
 	slices.SortFunc(sorted, func(a, b entry) int { return cmp.Compare(a.Path, b.Path) })
 
 	for i := range sorted {
-		it := &item{entry: sorted[i], id: makeID("track", sorted[i].Path)}
+		entry := sorted[i]
+		key := relativeTo(entry.Path, s.imports)
+		it := &item{entry: entry, id: makeID("track", key)}
 		if img := it.image(); img != "" {
 			it.imageURL = music.FileURL(img)
 		}
@@ -140,7 +142,9 @@ func buildCatalog(entries []entry) *catalog {
 		}
 		it.search = strings.ToLower(it.Title + "\n" + strings.Join(names, "\n") + "\n" + it.Album)
 		if it.Album != "" {
-			id := makeID("album", albumKey(&it.entry))
+			keyEntry := it.entry
+			keyEntry.Path = key
+			id := makeID("album", albumKey(&keyEntry))
 			al := c.albumByID[id]
 			if al == nil {
 				al = &album{Album: music.Album{ID: id, Name: it.Album}, sortName: strings.ToLower(it.Album)}
@@ -242,7 +246,11 @@ func (c *catalog) finishAlbum(al *album) {
 	default:
 		al.Artists = first.artists
 	}
+	al.TrackCount = len(al.items)
+	complete := true
 	for _, it := range al.items {
+		al.Duration += it.Duration
+		complete = complete && it.Duration > 0
 		if al.ImageURL == "" {
 			al.ImageURL = it.imageURL
 		}
@@ -252,6 +260,9 @@ func (c *catalog) finishAlbum(al *album) {
 		for _, a := range it.artists {
 			credit(c.artistByID[a.ID])
 		}
+	}
+	if !complete {
+		al.Duration = 0
 	}
 }
 

@@ -38,8 +38,8 @@ import (
 	"github.com/MoeForge/moejs/eventloop"
 	"github.com/MoeForge/moejs/webapi"
 
-	"mygo-music/internal/i18n"
-	"mygo-music/internal/music"
+	"github.com/miantiao-me/MMMMM/internal/i18n"
+	"github.com/miantiao-me/MMMMM/internal/music"
 )
 
 const (
@@ -148,7 +148,7 @@ type NeedsNewerApp struct {
 }
 
 func (e *NeedsNewerApp) Error() string {
-	return fmt.Sprintf("%s needs MyGo Music %s or later", e.Plugin, e.Version)
+	return fmt.Sprintf("%s needs MMMMM %s or later", e.Plugin, e.Version)
 }
 
 // Plugin is a music.Source in JavaScript. It starts on first use, and again on
