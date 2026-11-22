@@ -215,4 +215,6 @@ Everything else takes a permission in `plugin.json`:
 
 ## License
 
-AGPL-3.0. See [LICENSE](LICENSE).
+MMMMM is derived from MyGo Music and continues to be distributed under AGPL-3.0. [MyGo Music](https://github.com/egoist/mygo-music) · [AGPL-3.0](LICENSE)
+
+The mobile UI and design are adapted from MuseAmp, whose original work is released under the MIT License. [MuseAmp](https://github.com/Lakr233/MuseAmp) · [MIT license and copyright notice](LICENSE-MuseAmp)

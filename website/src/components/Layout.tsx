@@ -55,8 +55,14 @@ function Footer() {
     <footer class="footer">
       <div class="footer-inner">
         <span>
-          {site.name} · {t('Open source under', '以')} <a href={`${repo}/blob/main/LICENSE`}>AGPL-3.0</a>
-          {t(' · Made with ', ' 开源 · 用 ')}
+          {site.name} · {t('Based on ', '基于 ')}
+          <a href="https://github.com/egoist/mygo-music">MyGo Music</a>
+          {t(' · Distributed under ', '，以 ')}
+          <a href={`${repo}/blob/main/LICENSE`}>AGPL-3.0</a>
+          {t(' · Mobile UI and design from ', ' 发行 · 移动端界面与设计源自 ')}
+          <a href="https://github.com/Lakr233/MuseAmp">MuseAmp</a>
+          {' ('}<a href={`${repo}/blob/main/LICENSE-MuseAmp`}>MIT</a>{')'}
+          {t(' · Made with ', ' · 用 ')}
           <a href={mygo}>MyGo</a>
           {t('', ' 写成')}
         </span>

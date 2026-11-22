@@ -659,3 +659,16 @@ specific requirements.
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <https://www.gnu.org/licenses/>.
+
+-------------------------------------------------------------------------------
+
+MMMMM attribution
+
+MMMMM is derived from MyGo Music (https://github.com/egoist/mygo-music)
+and continues to be distributed under the GNU Affero General Public License,
+version 3 (AGPL-3.0).
+
+The mobile UI and design are adapted from MuseAmp
+(https://github.com/Lakr233/MuseAmp). The original MuseAmp work is licensed
+under the MIT License. See LICENSE-MuseAmp for the full license and copyright
+notice.
